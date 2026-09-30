@@ -1,0 +1,54 @@
+import { useState } from "react";
+import {
+  createRootRoute,
+  Outlet,
+} from "@tanstack/react-router";
+
+import {
+  TanStackRouterDevtools,
+} from "@tanstack/router-devtools";
+
+import {
+  ReactQueryDevtools,
+} from "@tanstack/react-query-devtools";
+
+import PizzaOfTheDay from "../PizzaOfTheDay";
+import Header from "../Header";
+
+// BEFORE
+// import { CartContext } from "../contexts";
+
+// AFTER
+import {CartContext, type CartItem} from "../contexts";
+
+export const Route =
+  createRootRoute({
+    component: () => {
+      // BEFORE
+      // const cartHook =
+      //   useState([]);
+
+      // AFTER
+      const cartHook =
+        useState<CartItem[]>(
+          []
+        );
+
+      return (
+        <>
+          <CartContext.Provider
+            value={cartHook}
+          >
+            <div>
+              <Header />
+              <Outlet />
+              <PizzaOfTheDay />
+            </div>
+          </CartContext.Provider>
+
+          <TanStackRouterDevtools />
+          <ReactQueryDevtools />
+        </>
+      );
+    },
+  });
