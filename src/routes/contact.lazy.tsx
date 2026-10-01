@@ -26,9 +26,7 @@ function ContactRoute() {
     ) {
       e.preventDefault();
 
-      const formData = new FormData(
-        e.target,
-      );
+      const formData = new FormData(e.target);
 
       return postContact(
         getString(formData, "name"),
@@ -43,26 +41,34 @@ function ContactRoute() {
       <h2>Contact</h2>
 
       {mutation.isSuccess ? (
-        <h3>Submitted!</h3>
+        <h3 className="m-12.5 text-center font-pacifico font-normal text-[30px] text-secondary">
+          Submitted!
+        </h3>
       ) : (
-        <form onSubmit={mutation.mutate}>
+        <form
+          className="flex flex-col items-center justify-items-center"
+          onSubmit={mutation.mutate}
+        >
           <input
-            name="name"
+            className="form-input my-3.75 w-full max-w-125 rounded-[5px] border-2 border-border p-2 focus:border-primary disabled:bg-[#999]"           name="name"
             placeholder="Name"
           />
 
           <input
-            type="email"
+            className="form-input my-3.75 w-full max-w-125 rounded-[5px] border-2 border-border p-2 focus:border-primary disabled:bg-[#999]"          type="email"
             name="email"
             placeholder="Email"
           />
 
           <textarea
-            placeholder="Message"
+            className="form-textarea my-3.75 w-full max-w-125 min-h-50 rounded-[5px] border-2 border-border p-2 focus:border-primary"            placeholder="Message"
             name="message"
           />
 
-          <button>Submit</button>
+          <button
+            className="btn">
+            Submit
+          </button>
         </form>
       )}
     </div>

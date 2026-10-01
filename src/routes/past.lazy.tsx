@@ -31,10 +31,6 @@ function ErrorBoundaryWrappedPastOrderRoutes() {
 function PastOrdersRoute() {
   const [page, setPage] = useState(1);
 
-  // BEFORE
-  // const [focusedOrder, setFocusedOrder] = useState();
-
-  // AFTER
   const [focusedOrder, setFocusedOrder] =
     useState<number>();
 
@@ -56,7 +52,7 @@ function PastOrdersRoute() {
 
   if (isLoading) {
     return (
-      <div className="past-orders">
+      <div className="mx-auto min-h-[650px] w-[90%] max-w-225">
         <h2>LOADING …</h2>
       </div>
     );
@@ -64,29 +60,39 @@ function PastOrdersRoute() {
 
   if (!data) {
     throw new Error(
-      "Past orders could not be loaded"
+      "Past orders could not be loaded",
     );
   }
 
   return (
-    <div className="past-orders">
-      <table>
+    <div className="mx-auto min-h-[650px] w-[90%] max-w-225">
+      <table className="my-6.25 w-full min-w-100 border border-[#dddddd] border-collapse font-sans text-[0.9em]">
         <thead>
-          <tr>
-            <td>ID</td>
-            <td>Date</td>
-            <td>Time</td>
+          <tr className="bg-secondary text-left text-white">
+            <td className="px-3.75 py-3 text-center">
+              ID
+            </td>
+            <td className="px-3.75 py-3 text-center">
+              Date
+            </td>
+            <td className="px-3.75 py-3 text-center">
+              Time
+            </td>
           </tr>
         </thead>
 
         <tbody>
           {data.map((order) => (
-            <tr key={order.order_id}>
-              <td>
+            <tr
+              key={order.order_id}
+              className="border-b border-[#dddddd] even:bg-[#f6fef0] last:border-b-2 last:border-secondary"
+            >
+              <td className="px-3.75 py-3 text-center">
                 <button
+                  className="btn"
                   onClick={() =>
                     setFocusedOrder(
-                      order.order_id
+                      order.order_id,
                     )
                   }
                 >
@@ -94,15 +100,21 @@ function PastOrdersRoute() {
                 </button>
               </td>
 
-              <td>{order.date}</td>
-              <td>{order.time}</td>
+              <td className="px-3.75 py-3 text-center">
+                {order.date}
+              </td>
+
+              <td className="px-3.75 py-3 text-center">
+                {order.time}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="pages">
+      <div className="flex items-center justify-evenly">
         <button
+          className="btn"
           disabled={page <= 1}
           onClick={() =>
             setPage(page - 1)
@@ -111,9 +123,12 @@ function PastOrdersRoute() {
           Previous
         </button>
 
-        <div>{page}</div>
+        <div className="font-pacifico text-[20px] text-primary">
+          {page}
+        </div>
 
         <button
+          className="btn"
           disabled={data.length < 10}
           onClick={() =>
             setPage(page + 1)
@@ -130,15 +145,27 @@ function PastOrdersRoute() {
           </h2>
 
           {pastOrderData ? (
-            <table>
+            <table className="my-6.25 w-full min-w-100 border-collapse border border-[#dddddd] font-sans text-[0.9em]">
               <thead>
-                <tr>
-                  <td>Image</td>
-                  <td>Name</td>
-                  <td>Size</td>
-                  <td>Quantity</td>
-                  <td>Price</td>
-                  <td>Total</td>
+                <tr className="bg-secondary text-left text-white">
+                  <td className="px-3.75 py-3 text-center">
+                    Image
+                  </td>
+                  <td className="px-3.75 py-3 text-center">
+                    Name
+                  </td>
+                  <td className="px-3.75 py-3 text-center">
+                    Size
+                  </td>
+                  <td className="px-3.75 py-3 text-center">
+                    Quantity
+                  </td>
+                  <td className="px-3.75 py-3 text-center">
+                    Price
+                  </td>
+                  <td className="px-3.75 py-3 text-center">
+                    Total
+                  </td>
                 </tr>
               </thead>
 
@@ -147,39 +174,41 @@ function PastOrdersRoute() {
                   (pizza) => (
                     <tr
                       key={`${pizza.pizzaTypeId}_${pizza.size}`}
+                      className="border-b border-[#dddddd] even:bg-[#f6fef0] last:border-b-2 last:border-secondary"
                     >
-                      <td>
+                      <td className="px-3.75 py-3 text-center">
                         <img
+                          className="w-12.5"
                           src={pizza.image}
                           alt={pizza.name}
                         />
                       </td>
 
-                      <td>
+                      <td className="px-3.75 py-3 text-center">
                         {pizza.name}
                       </td>
 
-                      <td>
+                      <td className="px-3.75 py-3 text-center">
                         {pizza.size}
                       </td>
 
-                      <td>
+                      <td className="px-3.75 py-3 text-center">
                         {pizza.quantity}
                       </td>
 
-                      <td>
+                      <td className="px-3.75 py-3 text-center">
                         {intl.format(
-                          pizza.price
+                          pizza.price,
                         )}
                       </td>
 
-                      <td>
+                      <td className="px-3.75 py-3 text-center">
                         {intl.format(
-                          pizza.total
+                          pizza.total,
                         )}
                       </td>
                     </tr>
-                  )
+                  ),
                 )}
               </tbody>
             </table>
@@ -188,6 +217,7 @@ function PastOrdersRoute() {
           )}
 
           <button
+            className="btn"
             onClick={() =>
               setFocusedOrder(undefined)
             }

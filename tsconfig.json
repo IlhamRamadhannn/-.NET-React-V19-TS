@@ -15,7 +15,7 @@
         "module": "ESNext",
         "moduleResolution": "bundler",
     "target": "esnext",
-    "types": [],
+    "types": ["vite/client","@vitest/browser/providers/playwright"],
       "allowJs": true,
 
 
