@@ -1,20 +1,23 @@
+import type { CartItem } from "./cartSlice";
+
+
 const intl = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
-type Size = "S" | "M" | "L";
+// type Size = "S" | "M" | "L";
 
-interface Pizza {
-  name: string;
-  sizes: Record<Size, number>;
-}
+// interface Pizza {
+//   name: string;
+//   sizes: Record<Size, number>;
+// }
 
-interface CartItem {
-  size: Size;
-  price: number;
-  pizza: Pizza;
-}
+// interface CartItem {
+//   size: Size;
+//   price: number;
+//   pizza: Pizza;
+// }
 
 interface Props {
   cart: CartItem[];

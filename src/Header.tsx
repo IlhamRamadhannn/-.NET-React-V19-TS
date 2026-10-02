@@ -1,9 +1,12 @@
 import { useContext } from "react";
 import { CartContext } from "./contexts";
 import { Link } from "@tanstack/react-router";
+import {useAppSelector} from "./hooks";
+import { selectCartCount } from "./cartSlice";
 
 export default function Header() {
-  const [cart] = useContext(CartContext);
+  //const [cart] = useContext(CartContext);
+  const cartCount = useAppSelector(selectCartCount);
 
   return (
     <nav className='grid w-full border-b border-[#ccc] [grid-template-areas:"._logo_logo_logo_cart"]'>
@@ -19,7 +22,7 @@ export default function Header() {
       <div className="[grid-area:cart] flex items-center justify-center text-[40px]">
         🛒
         <span className="relative left-[-17px] top-[-17px] flex h-[20px] w-[20px] items-center justify-center rounded-[50%] bg-secondary text-[18px] text-white">
-          {cart.length}
+          {cartCount}
         </span>
       </div>
     </nav>

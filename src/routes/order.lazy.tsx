@@ -1,9 +1,30 @@
-import { useState, useEffect, useContext } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { CartContext } from "../contexts";
+
 import Cart from "../Cart";
 import Pizza from "../Pizza";
-import type { Pizza as PizzaType, PizzaSize } from "../APIResponsesTypes";
+import type {
+  Pizza as PizzaType,
+  PizzaSize,
+} from "../APIResponsesTypes";
+
+import { useAppSelector, useAppDispatch } from "../hooks";
+import {
+  addToCart,
+  clearCart,
+  selectCartItems,
+} from "../cartSlice";
+
+import {
+  setPizzaType,
+  setPizzaSize,
+  selectPizzaType,
+  selectPizzaSize,
+} from "../OrderSlice";
+
+import {
+  useGetPizzasQuery,
+  usePlaceOrderMutation,
+} from "../queries/pizzaApi";
 
 // feel free to change en-US / USD to your locale
 const intl = new Intl.NumberFormat("en-US", {
@@ -20,64 +41,69 @@ export const Route = createLazyFileRoute("/order")({
 });
 
 function Order() {
-  const [pizzaType, setPizzaType] = useState("pepperoni");
-  const [pizzaSize, setPizzaSize] = useState<PizzaSize>("M");
-  const [pizzaTypes, setPizzaTypes] = useState<PizzaType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useContext(CartContext);
+  const cart = useAppSelector(selectCartItems);
+  const dispatch = useAppDispatch();
+
+  const pizzaType =
+    useAppSelector(selectPizzaType);
+
+  const pizzaSize =
+    useAppSelector(selectPizzaSize);
+
+  const {
+    data: pizzaTypes = [],
+    isLoading: isLoadingPizzas,
+  } = useGetPizzasQuery();
+
+  const [
+    placeOrder,
+    { isLoading: isPlacingOrder },
+  ] = usePlaceOrderMutation();
+
+  const loading =
+    isLoadingPizzas || isPlacingOrder;
 
   async function checkout() {
-    setLoading(true);
-
-    await fetch("/api/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        cart,
-      }),
-    });
-
-    setCart([]);
-    setLoading(false);
+    await placeOrder(cart);
+    dispatch(clearCart());
   }
 
   let price: string | undefined;
   let selectedPizza: PizzaType | undefined;
+
   if (!loading) {
-    selectedPizza = pizzaTypes.find((pizza) => pizzaType === pizza.id);
+    selectedPizza = pizzaTypes.find(
+      (pizza) => pizzaType === pizza.id,
+    );
+
     price = selectedPizza
-      ? intl.format(selectedPizza.sizes[pizzaSize])
+      ? intl.format(
+          selectedPizza.sizes[pizzaSize],
+        )
       : undefined;
-  }
-
-  useEffect(() => {
-    void fetchPizzaTypes();
-  }, []);
-
-  async function fetchPizzaTypes() {
-    const pizzasRes = await fetch("/api/pizzas");
-    const pizzasJson = (await pizzasRes.json()) as PizzaType[];
-    setPizzaTypes(pizzasJson);
-    setLoading(false);
   }
 
   return (
     <div className="mx-auto grid max-w-325 grid-cols-1 gap-12.5 lg:grid-cols-[2fr_1fr]">
       <div className="w-full lg:ml-[5%]">
         <h2>Create Order</h2>
+
         <form
           className="flex flex-col md:flex-row md:justify-between"
           onSubmit={(e) => {
             e.preventDefault();
+
             if (!selectedPizza || !price) {
               return;
             }
-            setCart([
-              ...cart,
-              { pizza: selectedPizza, size: pizzaSize, price },
-            ]);
+
+            dispatch(
+              addToCart({
+                pizza: selectedPizza,
+                size: pizzaSize,
+                price,
+              }),
+            );
           }}
         >
           <div className="my-2.5 w-full border-b border-border p-3.75 text-center md:border-r md:border-b-0">
@@ -88,19 +114,28 @@ function Order() {
               >
                 Pizza Type
               </label>
+
               <select
                 className="form-select mb-7.5 block w-full py-1.25 pl-1.25 text-[16px]"
-                onChange={(e) => setPizzaType(e.target.value)}
+                onChange={(e) =>
+                  dispatch(
+                    setPizzaType(e.target.value),
+                  )
+                }
                 name="pizza-type"
                 value={pizzaType}
               >
                 {pizzaTypes.map((pizza) => (
-                  <option key={pizza.id} value={pizza.id}>
+                  <option
+                    key={pizza.id}
+                    value={pizza.id}
+                  >
                     {pizza.name}
                   </option>
                 ))}
               </select>
             </div>
+
             <div className="my-2.5 text-center">
               <label
                 htmlFor="pizza-size"
@@ -108,11 +143,16 @@ function Order() {
               >
                 Pizza Size
               </label>
+
               <div className="my-2.5 text-center">
                 <span>
                   <input
                     onChange={(e) =>
-                      setPizzaSize(e.target.value as PizzaSize)
+                      dispatch(
+                        setPizzaSize(
+                          e.target.value as PizzaSize,
+                        ),
+                      )
                     }
                     checked={pizzaSize === "S"}
                     className="peer sr-only"
@@ -121,14 +161,23 @@ function Order() {
                     value="S"
                     id="pizza-s"
                   />
-                  <label htmlFor="pizza-s" className={sizeLabelClass}>
+
+                  <label
+                    htmlFor="pizza-s"
+                    className={sizeLabelClass}
+                  >
                     Small
                   </label>
                 </span>
+
                 <span>
                   <input
                     onChange={(e) =>
-                      setPizzaSize(e.target.value as PizzaSize)
+                      dispatch(
+                        setPizzaSize(
+                          e.target.value as PizzaSize,
+                        ),
+                      )
                     }
                     checked={pizzaSize === "M"}
                     className="peer sr-only"
@@ -137,14 +186,23 @@ function Order() {
                     value="M"
                     id="pizza-m"
                   />
-                  <label htmlFor="pizza-m" className={sizeLabelClass}>
+
+                  <label
+                    htmlFor="pizza-m"
+                    className={sizeLabelClass}
+                  >
                     Medium
                   </label>
                 </span>
+
                 <span>
                   <input
                     onChange={(e) =>
-                      setPizzaSize(e.target.value as PizzaSize)
+                      dispatch(
+                        setPizzaSize(
+                          e.target.value as PizzaSize,
+                        ),
+                      )
                     }
                     checked={pizzaSize === "L"}
                     className="peer sr-only"
@@ -153,16 +211,25 @@ function Order() {
                     value="L"
                     id="pizza-l"
                   />
-                  <label htmlFor="pizza-l" className={sizeLabelClass}>
+
+                  <label
+                    htmlFor="pizza-l"
+                    className={sizeLabelClass}
+                  >
                     Large
                   </label>
                 </span>
               </div>
             </div>
-            <button type="submit" className="btn">
+
+            <button
+              type="submit"
+              className="btn"
+            >
               Add to Cart
             </button>
           </div>
+
           {loading || !selectedPizza ? (
             <h3>LOADING …</h3>
           ) : (
@@ -172,15 +239,20 @@ function Order() {
                 description={selectedPizza.description}
                 image={selectedPizza.image}
               />
+
               <p>{price}</p>
             </div>
           )}
         </form>
       </div>
+
       {loading ? (
         <h2>LOADING …</h2>
       ) : (
-        <Cart checkout={() => void checkout()} cart={cart} />
+        <Cart
+          checkout={() => void checkout()}
+          cart={cart}
+        />
       )}
     </div>
   );

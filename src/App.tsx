@@ -4,13 +4,13 @@ import {
   RouterProvider,
   createRouter,
 } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-
+// import { routeTree } from "./routeTree.gen";
+import { QueryClient,QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
+
+import { Provider } from "react-redux";
+import { routeTree } from "./routeTree.gen";
+import { store } from "./store";
 
 const router = createRouter({
   routeTree,
@@ -27,7 +27,11 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <StrictMode>
-      <RouterProvider router={router} />
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </Provider>
     </StrictMode>
   );
 };
