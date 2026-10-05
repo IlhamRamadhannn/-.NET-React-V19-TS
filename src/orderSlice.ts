@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { PizzaSize } from "./APIResponsesTypes";
 
-interface OrderState{
+export interface OrderState{
     pizzaType: string;
     pizzaSize : PizzaSize;
 }

@@ -15,7 +15,7 @@
         "module": "ESNext",
         "moduleResolution": "bundler",
     "target": "esnext",
-    "types": ["vite/client","@vitest/browser/providers/playwright"],
+    "types": ["vite/client"],
       "allowJs": true,
 
 
@@ -28,8 +28,8 @@
 
     // Other Outputs
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "declarationMap": false,
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,

@@ -19,7 +19,7 @@ import {
   setPizzaSize,
   selectPizzaType,
   selectPizzaSize,
-} from "../OrderSlice";
+} from "../orderSlice";
 
 import {
   useGetPizzasQuery,

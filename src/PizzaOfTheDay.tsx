@@ -6,18 +6,18 @@ const intl = new Intl.NumberFormat("en-US", {
   currency: "USD",
 });
 
-interface Props {
-  name: string;
-  description: string;
-  image: string;
-  sizes: {
-    S: number;
-    M: number;
-    L: number;
-  };
-}
+// interface Props {
+//   name: string;
+//   description: string;
+//   image: string;
+//   sizes: {
+//     S: number;
+//     M: number;
+//     L: number;
+//   };
+// }
 
-const PizzaOfTheDay = (props: Props) => {
+const PizzaOfTheDay = () => {
   const pizzaOfTheDay = usePizzaOfTheDay();
 
   if (!pizzaOfTheDay) {

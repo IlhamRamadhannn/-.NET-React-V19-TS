@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { CartContext } from "./contexts";
+// import { useContext } from "react";
+// import { CartContext } from "./contexts";
 import { Link } from "@tanstack/react-router";
 import {useAppSelector} from "./hooks";
 import { selectCartCount } from "./cartSlice";

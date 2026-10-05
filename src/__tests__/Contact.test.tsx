@@ -1,14 +1,10 @@
 import { render } from "@testing-library/react";
 import { expect, test, vi } from "vitest";
 import createFetchMock from "vitest-fetch-mock";
-import {
-  QueryClientProvider,
-  QueryClient,
-} from "@tanstack/react-query";
+import { Provider } from "react-redux";
 
 import { Route } from "../routes/contact.lazy";
-
-const queryClient = new QueryClient();
+import { makeStore } from "../store";
 
 const fetchMocker = createFetchMock(vi);
 fetchMocker.enableMocks();
@@ -21,25 +17,18 @@ test("can submit contact form", async () => {
   const ContactRoute =
     Route.options.component;
 
-    console.log(
-  "COMPONENT:",
-  Route.options.component?.name,
-);
-
-
-
   if (!ContactRoute) {
     throw new Error(
       "contact route has no component",
     );
   }
 
+  const store = makeStore();
+
   const screen = render(
-    <QueryClientProvider
-      client={queryClient}
-    >
+    <Provider store={store}>
       <ContactRoute />
-    </QueryClientProvider>,
+    </Provider>,
   );
 
   const nameInput =
@@ -96,14 +85,13 @@ test("can submit contact form", async () => {
     "/api/contact",
   );
 
-  expect(fetchMocker).toHaveBeenCalledWith(
-    "/api/contact",
-    {
-      body: JSON.stringify(testData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    },
+  expect(request.method).toBe("POST");
+
+  expect(
+    request.headers.get("content-type"),
+  ).toContain("application/json");
+
+  expect(await request.json()).toEqual(
+    testData,
   );
 });

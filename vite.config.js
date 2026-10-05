@@ -8,6 +8,9 @@ const projectRoot = process.cwd();
 
 export default defineConfig({
   root: "src",
+  build: {
+    outDir: "../dist",
+  },
   server: {
     proxy: {
       "/api": {

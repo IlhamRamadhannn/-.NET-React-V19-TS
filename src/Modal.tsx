@@ -1,6 +1,6 @@
-import type { ReactNode } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
-import type { ReactElement } from "react";
+// import type { ReactElement } from "react";
 import { createPortal } from "react-dom";
 
 const Modal = (

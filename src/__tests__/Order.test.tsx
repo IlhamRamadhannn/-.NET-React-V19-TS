@@ -1,12 +1,13 @@
 import { expect, test, vi } from "vitest";
-import createFetchMock from "vitest-fetch-mock";
-import { CartContext } from "../contexts";
+import createFetchMock from "vitest-fetch-mock";  
 import { Route } from "../routes/order.lazy";
 import {
   render,
   screen,
   waitFor,
 } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { makeStore } from "../store";
 
 const fetchMocker = createFetchMock(vi);
 fetchMocker.enableMocks();
@@ -38,12 +39,12 @@ test("loads pizza types from api", async () => {
     );
   }
 
+  const store = makeStore();
+
   render(
-    <CartContext.Provider
-      value={[[], vi.fn()]}
-    >
+    <Provider store={store}>
       <OrderRoute />
-    </CartContext.Provider>,
+    </Provider>,
   );
 
   await waitFor(() => {
@@ -52,7 +53,18 @@ test("loads pizza types from api", async () => {
     ).toBeGreaterThan(0);
   });
 
-  expect(fetchMocker).toHaveBeenCalledWith(
-    "/api/pizzas",
-  );
+const requests = fetchMocker.requests();
+
+expect(requests.length).toBe(1);
+
+const request = requests[0];
+
+if (!request) {
+  throw new Error("No request found");
+}
+
+expect(request.url).toContain(
+  "/api/pizzas",
+);
+
 });
